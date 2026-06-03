@@ -1,75 +1,136 @@
 const express = require("express");
-const fs = require("fs");
+const mongoose = require("mongoose");
+require("dotenv").config();
+
+const Task = require("./models/Task");
 
 const app = express();
-const PORT = 3000;
 
 app.use(express.json());
 
-const filePath = "./data/tasks.json";
 
-// Get all tasks
-app.get("/tasks", (req, res) => {
-    const tasks = JSON.parse(fs.readFileSync(filePath));
-    res.json(tasks);
+// MongoDB Connection
+mongoose.connect(process.env.MONGO_URI)
+.then(() => {
+    console.log("MongoDB Connected");
+})
+.catch((err) => {
+    console.log(err);
 });
 
-// Create task
-app.post("/tasks", (req, res) => {
-    const tasks = JSON.parse(fs.readFileSync(filePath));
 
-    const newTask = {
-        id: Date.now(),
-        title: req.body.title,
-        completed: false
-    };
+// GET ALL TASKS
+app.get("/tasks", async (req, res) => {
 
-    tasks.push(newTask);
+    try {
 
-    fs.writeFileSync(filePath, JSON.stringify(tasks, null, 2));
+        const tasks = await Task.find();
 
-    res.status(201).json(newTask);
-});
+        res.json(tasks);
 
-// Mark complete
-app.put("/tasks/:id", (req, res) => {
-    const tasks = JSON.parse(fs.readFileSync(filePath));
+    } catch (error) {
 
-    const task = tasks.find(
-        t => t.id == req.params.id
-    );
-
-    if (!task) {
-        return res.status(404).json({
-            message: "Task not found"
+        res.status(500).json({
+            message: error.message
         });
+
     }
-
-    task.completed = true;
-
-    fs.writeFileSync(filePath, JSON.stringify(tasks, null, 2));
-
-    res.json(task);
 });
 
-// Delete task
-app.delete("/tasks/:id", (req, res) => {
 
-    let tasks = JSON.parse(
-        fs.readFileSync(filePath)
-    );
+// CREATE TASK
+app.post("/tasks", async (req, res) => {
 
-    tasks = tasks.filter(
-        t => t.id != req.params.id
-    );
+    try {
 
-    fs.writeFileSync(filePath, JSON.stringify(tasks, null, 2));
+        const task = await Task.create({
+            title: req.body.title
+        });
 
-    res.json({
-        message: "Task deleted"
-    });
+        res.status(201).json(task);
+
+    } catch (error) {
+
+        res.status(500).json({
+            message: error.message
+        });
+
+    }
 });
+
+
+// MARK COMPLETE
+app.put("/tasks/:id", async (req, res) => {
+
+    try {
+
+        const task = await Task.findByIdAndUpdate(
+            req.params.id,
+            {
+                completed: true
+            },
+            {
+                new: true
+            }
+        );
+
+        if (!task) {
+
+            return res.status(404).json({
+                message: "Task not found"
+            });
+
+        }
+
+        res.json(task);
+
+    } catch (error) {
+
+        res.status(500).json({
+            message: error.message
+        });
+
+    }
+});
+
+
+// DELETE TASK
+app.delete("/tasks/:id", async (req, res) => {
+
+    try {
+
+        const task = await Task.findByIdAndDelete(
+            req.params.id
+        );
+
+        if (!task) {
+
+            return res.status(404).json({
+                message: "Task not found"
+            });
+
+        }
+
+        res.json({
+            message: "Task deleted successfully"
+        });
+
+    } catch (error) {
+
+        res.status(500).json({
+            message: error.message
+        });
+
+    }
+});
+
+
+const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
+
+    console.log(
+        `Server running on port ${PORT}`
+    );
+
 });
