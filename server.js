@@ -1,131 +1,128 @@
 const express = require("express");
-const mongoose = require("mongoose");
-require("dotenv").config();
-
-const Task = require("./models/Task");
+const fs = require("fs");
 
 const app = express();
+const PORT = 3000;
 
 app.use(express.json());
 
-
-// MongoDB Connection
-mongoose.connect(process.env.MONGO_URI)
-.then(() => {
-    console.log("MongoDB Connected");
-})
-.catch((err) => {
-    console.log(err);
-});
+const filePath = "./data/tasks.json";
 
 
 // GET ALL TASKS
-app.get("/tasks", async (req, res) => {
+app.get("/tasks", (req, res) => {
 
-    try {
+    const tasks = JSON.parse(
+        fs.readFileSync(filePath)
+    );
 
-        const tasks = await Task.find();
-
-        res.json(tasks);
-
-    } catch (error) {
-
-        res.status(500).json({
-            message: error.message
-        });
-
-    }
+    res.json(tasks);
 });
 
 
 // CREATE TASK
-app.post("/tasks", async (req, res) => {
+app.post("/tasks", (req, res) => {
 
-    try {
+    const tasks = JSON.parse(
+        fs.readFileSync(filePath)
+    );
 
-        const task = await Task.create({
-            title: req.body.title
+    if (!req.body.title) {
+
+        return res.status(400).json({
+            message: "Title is required"
         });
-
-        res.status(201).json(task);
-
-    } catch (error) {
-
-        res.status(500).json({
-            message: error.message
-        });
-
     }
+
+    const newTask = {
+        id: Date.now(),
+        title: req.body.title,
+        completed: false
+    };
+
+    tasks.push(newTask);
+
+    fs.writeFileSync(
+        filePath,
+        JSON.stringify(tasks, null, 2)
+    );
+
+    res.status(201).json(newTask);
+});
+
+
+// GET SINGLE TASK
+app.get("/tasks/:id", (req, res) => {
+
+    const tasks = JSON.parse(
+        fs.readFileSync(filePath)
+    );
+
+    const task = tasks.find(
+        t => t.id == req.params.id
+    );
+
+    if (!task) {
+
+        return res.status(404).json({
+            message: "Task not found"
+        });
+    }
+
+    res.json(task);
 });
 
 
 // MARK COMPLETE
-app.put("/tasks/:id", async (req, res) => {
+app.put("/tasks/:id", (req, res) => {
 
-    try {
+    const tasks = JSON.parse(
+        fs.readFileSync(filePath)
+    );
 
-        const task = await Task.findByIdAndUpdate(
-            req.params.id,
-            {
-                completed: true
-            },
-            {
-                new: true
-            }
-        );
+    const task = tasks.find(
+        t => t.id == req.params.id
+    );
 
-        if (!task) {
+    if (!task) {
 
-            return res.status(404).json({
-                message: "Task not found"
-            });
-
-        }
-
-        res.json(task);
-
-    } catch (error) {
-
-        res.status(500).json({
-            message: error.message
+        return res.status(404).json({
+            message: "Task not found"
         });
-
     }
+
+    task.completed = true;
+
+    fs.writeFileSync(
+        filePath,
+        JSON.stringify(tasks, null, 2)
+    );
+
+    res.json(task);
 });
 
 
 // DELETE TASK
-app.delete("/tasks/:id", async (req, res) => {
+app.delete("/tasks/:id", (req, res) => {
 
-    try {
+    let tasks = JSON.parse(
+        fs.readFileSync(filePath)
+    );
 
-        const task = await Task.findByIdAndDelete(
-            req.params.id
-        );
+    tasks = tasks.filter(
+        t => t.id != req.params.id
+    );
 
-        if (!task) {
+    fs.writeFileSync(
+        filePath,
+        JSON.stringify(tasks, null, 2)
+    );
 
-            return res.status(404).json({
-                message: "Task not found"
-            });
-
-        }
-
-        res.json({
-            message: "Task deleted successfully"
-        });
-
-    } catch (error) {
-
-        res.status(500).json({
-            message: error.message
-        });
-
-    }
+    res.json({
+        message: "Task deleted"
+    });
 });
 
-
-const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
 
