@@ -27,17 +27,23 @@ app.post("/tasks", (req, res) => {
         fs.readFileSync(filePath)
     );
 
-    if (!req.body.title) {
+    const { title, priority, dueDate } =
+        req.body;
+
+    if (!title) {
 
         return res.status(400).json({
             message: "Title is required"
         });
+
     }
 
     const newTask = {
         id: Date.now(),
-        title: req.body.title,
-        completed: false
+        title,
+        completed: false,
+        priority: priority || "Low",
+        dueDate: dueDate || null
     };
 
     tasks.push(newTask);
@@ -48,6 +54,7 @@ app.post("/tasks", (req, res) => {
     );
 
     res.status(201).json(newTask);
+
 });
 
 
@@ -121,6 +128,45 @@ app.delete("/tasks/:id", (req, res) => {
     res.json({
         message: "Task deleted"
     });
+});
+
+
+// UPDATE TASK
+app.patch("/tasks/:id", (req, res) => {
+
+    const tasks = JSON.parse(
+        fs.readFileSync(filePath)
+    );
+
+    const task = tasks.find(
+        t => t.id == req.params.id
+    );
+
+    if (!task) {
+
+        return res.status(404).json({
+            message: "Task not found"
+        });
+
+    }
+
+    const { title, priority } = req.body;
+
+    if (title) {
+        task.title = title;
+    }
+
+    if (priority) {
+        task.priority = priority;
+    }
+
+    fs.writeFileSync(
+        filePath,
+        JSON.stringify(tasks, null, 2)
+    );
+
+    res.json(task);
+
 });
 
 
