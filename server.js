@@ -170,6 +170,25 @@ app.patch("/tasks/:id", (req, res) => {
 });
 
 
+// SEARCH TAASK
+app.get("/search", (req, res) => {
+
+    const tasks = JSON.parse(
+        fs.readFileSync(filePath)
+    );
+
+    const keyword =
+        req.query.title?.toLowerCase();
+
+    const result = tasks.filter(task =>
+        task.title.toLowerCase()
+        .includes(keyword)
+    );
+
+    res.json(result);
+
+});
+
 app.listen(PORT, () => {
 
     console.log(
