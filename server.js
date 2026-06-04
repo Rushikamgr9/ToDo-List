@@ -189,6 +189,23 @@ app.get("/search", (req, res) => {
 
 });
 
+
+// Filter Completed Task
+app.get("/completed", (req, res) => {
+
+    const tasks = JSON.parse(
+        fs.readFileSync(filePath)
+    );
+
+    const completedTasks =
+        tasks.filter(
+            task => task.completed
+        );
+
+    res.json(completedTasks);
+
+});
+
 app.listen(PORT, () => {
 
     console.log(
