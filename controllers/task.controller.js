@@ -45,3 +45,44 @@ exports.createTask = (req, res) => {
 
     res.status(201).json(newTask);
 };
+
+exports.getTaskById = (req, res) => {
+
+    const tasks = JSON.parse(
+        fs.readFileSync(filePath)
+    );
+
+    const task = tasks.find(
+        t => t.id == req.params.id
+    );
+
+    if (!task) {
+
+        return res.status(404).json({
+            message: "Task not found"
+        });
+
+    }
+
+    res.json(task);
+};
+
+exports.deleteTask = (req, res) => {
+
+    let tasks = JSON.parse(
+        fs.readFileSync(filePath)
+    );
+
+    tasks = tasks.filter(
+        t => t.id != req.params.id
+    );
+
+    fs.writeFileSync(
+        filePath,
+        JSON.stringify(tasks, null, 2)
+    );
+
+    res.json({
+        message: "Task deleted"
+    });
+};
