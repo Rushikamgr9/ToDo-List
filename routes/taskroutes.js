@@ -5,6 +5,9 @@ const router = express.Router();
 const taskController =
 require("../controllers/taskController");
 
+const validateTask =
+require("../middleware/validateTask");
+
 router.get(
     "/",
     taskController.getAllTasks
