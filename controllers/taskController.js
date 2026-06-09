@@ -1,3 +1,24 @@
+const taskService =
+require("../services/taskService");
+
+exports.getAllTasks = (req, res) => {
+
+    const tasks =
+        taskService.getAllTasks();
+
+    res.json(tasks);
+};
+
+exports.createTask = (req, res) => {
+
+    const task =
+        taskService.createTask(
+            req.body
+        );
+
+    res.status(201).json(task);
+};
+
 const fs = require("fs");
 
 const filePath = "./data/tasks.json";
