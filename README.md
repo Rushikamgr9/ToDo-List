@@ -5,13 +5,17 @@ A simple REST API built using Node.js and Express.
 ## Features
 
 - Create Task
-- View All Tasks
-- View Single Task
-- Mark Task Complete
+- Update Task
 - Delete Task
+- Mark Complete
+- Search Tasks
+- Filter Tasks
+- Statistics Endpoint
 
 ## Technologies
 
 - Node.js
 - Express.js
-- JSON File Storage
+- MVC Architecture
+- REST API
+- JSON Storage
