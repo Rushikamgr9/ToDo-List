@@ -9,8 +9,9 @@ const validateTask =
 require("../middleware/validateTask");
 
 router.get(
-    "/",
-    taskController.getAllTasks
+"/",
+authMiddleware,
+taskController.getAllTasks
 );
 
 router.post(
