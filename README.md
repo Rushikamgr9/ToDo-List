@@ -4,13 +4,13 @@ A simple REST API built using Node.js and Express.
 
 ## Features
 
-- Create Task
-- Update Task
-- Delete Task
-- Mark Complete
-- Search Tasks
-- Filter Tasks
-- Statistics Endpoint
+- User Registration
+- Login
+- JWT Authentication
+- Task CRUD
+- Search
+- Filtering
+- Statistics
 
 ## Technologies
 
@@ -19,3 +19,9 @@ A simple REST API built using Node.js and Express.
 - MVC Architecture
 - REST API
 - JSON Storage
+- bcrypt
+
+## Installation
+
+npm install
+npm start
