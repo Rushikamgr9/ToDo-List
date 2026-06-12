@@ -27,3 +27,32 @@ async (req, res) => {
 
     }
 };
+
+exports.login =
+async (req, res) => {
+
+    try {
+
+        const {
+            username,
+            password
+        } = req.body;
+
+        const token =
+            await authService.login(
+                username,
+                password
+            );
+
+        res.json({
+            token
+        });
+
+    } catch (err) {
+
+        res.status(400).json({
+            message: err.message
+        });
+
+    }
+};
