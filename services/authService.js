@@ -73,4 +73,29 @@ exports.login = async (
         );
     }
 
-}
+    const validPassword =
+        await bcrypt.compare(
+            password,
+            user.password
+        );
+
+    if (!validPassword) {
+
+        throw new Error(
+            "Invalid password"
+        );
+    }
+
+    const token =
+        jwt.sign(
+            {
+                userId: user.id
+            },
+            process.env.JWT_SECRET,
+            {
+                expiresIn: "1d"
+            }
+        );
+
+    return token;
+};
