@@ -1,16 +1,28 @@
 const {
-    readTasks,
-    writeTasks
+    readFile,
+    writeFile
 } = require("../utils/fileHelper");
 
-exports.getAllTasks = () => {
+const TASK_FILE =
+"./data/tasks.json";
 
-    return readTasks();
+exports.getAllTasks =
+(userId) => {
+
+    const tasks =
+        readFile(TASK_FILE);
+
+    return tasks.filter(
+        task =>
+            task.userId == userId
+    );
 };
 
-exports.createTask = (data) => {
+exports.createTask =
+(data, userId) => {
 
-    const tasks = readTasks();
+    const tasks =
+        readFile(TASK_FILE);
 
     const newTask = {
 
@@ -26,13 +38,18 @@ exports.createTask = (data) => {
         dueDate:
             data.dueDate || null,
 
+        userId,
+
         createdAt:
             new Date()
     };
 
     tasks.push(newTask);
 
-    writeTasks(tasks);
+    writeFile(
+        TASK_FILE,
+        tasks
+    );
 
     return newTask;
 };
