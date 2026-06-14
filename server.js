@@ -1,18 +1,39 @@
-const express = require("express");
-const taskRoutes = require("./routes/taskRoutes");
+const express =
+require("express");
 
-const app = express();
+require("dotenv").config();
+
+const app =
+express();
 
 app.use(express.json());
 
-app.use("/tasks", taskRoutes);
+const authRoutes =
+require("./routes/authRoutes");
 
-const PORT = 3000;
+const taskRoutes =
+require("./routes/taskRoutes");
 
-app.listen(PORT, () => {
+app.use(
+    "/auth",
+    authRoutes
+);
 
-    console.log(
-        `Server running on port ${PORT}`
-    );
+app.use(
+    "/tasks",
+    taskRoutes
+);
 
-});
+const PORT =
+process.env.PORT || 3000;
+
+app.listen(
+    PORT,
+    () => {
+
+        console.log(
+            `Server running on port ${PORT}`
+        );
+
+    }
+);
