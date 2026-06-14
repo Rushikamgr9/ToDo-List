@@ -1,27 +1,66 @@
-# To-Do List API
+# ToDo API
 
-A simple REST API built using Node.js and Express.
+A RESTful ToDo API built using Node.js and Express.js with JWT Authentication and MVC Architecture.
 
 ## Features
 
 - User Registration
-- Login
+- User Login
 - JWT Authentication
-- Task CRUD
-- Search
-- Filtering
-- Statistics
+- Protected Routes
+- Create Task
+- View Tasks
+- User-Specific Tasks
+- Task Validation
+- Password Hashing using bcrypt
+- MVC Architecture
+- Service Layer Pattern
 
-## Technologies
+## Tech Stack
 
 - Node.js
 - Express.js
-- MVC Architecture
-- REST API
-- JSON Storage
-- bcrypt
+- JWT (jsonwebtoken)
+- bcryptjs
+- dotenv
+- JSON File Storage
+- Git & GitHub
 
 ## Installation
 
 npm install
 npm start
+
+## Security Features
+
+- Password Hashing using bcrypt
+- JWT Authentication
+- Protected Routes
+- User-specific task access
+- Request Validation
+
+## Architecture
+
+This project follows:
+
+- MVC Architecture
+- Service Layer Pattern
+- Middleware-based Authentication
+- Separation of Concerns
+
+## Learning Outcomes
+
+Through this project I learned:
+
+- Backend Development with Node.js
+- REST API Development
+- Express.js Routing
+- Authentication & Authorization
+- Middleware
+- MVC Architecture
+- Git & GitHub
+- JSON Data Handling
+
+## Author
+
+Rushika Magar
